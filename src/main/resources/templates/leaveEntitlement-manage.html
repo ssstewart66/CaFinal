@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Entitlement Management</title>
+    <link rel="stylesheet" href="/css/user-list.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a th:href="@{/Admin/users}">Manage Users</a></li>
+            <li><a th:href="@{/Admin/leavetypes}">Manage Leave Types</a></li>
+            <li><a th:href="@{/Admin/leaveentitlements}">Manage Leave Entitlements</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <div class="header-row">
+            <h1>Leave Entitlement List</h1>
+            <div class="logout-container">
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Annual leave</th>
+                <th>last</th>
+                <th>Medical leave</th>
+                <th>last</th>
+                <th>Compensation leave</th>
+                <th>last</th>
+                <th style="width: 200px;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.annual_leave_entitlement}"></td>
+                <td th:text="${user.annual_leave_entitlement_last}"></td>
+                <td th:text="${user.medical_leave_entitlement}"></td>
+                <td th:text="${user.medical_leave_entitlement_last}"></td>
+                <td th:text="${user.compensation_leave_balance}"></td>
+                <td th:text="${user.compensation_leave_balance_last}"></td>
+                <td class="actions">
+                    <a th:href="@{/Admin/leaveentitlements/update/{id}(id=${user.id})}" class="btn btn-primary">Update</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+</body>
+</html>

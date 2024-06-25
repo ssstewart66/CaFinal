@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>CompensationLeave Applications</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/logout.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      background-color: #343a40;
+      color: white;
+      padding: 15px;
+      height: 100vh;
+    }
+    .sidebar h5 {
+      color: white;
+    }
+    .sidebar a {
+      color: white;
+    }
+    .main-content {
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 15px;
+    }
+    .navbar {
+      margin-bottom: 20px;
+    }
+    .table th, .table td {
+      vertical-align: middle;
+    }
+    .pagination {
+      margin-top: 20px;
+    }
+    .navbar-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }.centered-title {
+       text-align: center;
+     }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand">Leave Application Processing System</div>
+  <div class="navbar-menu">
+    <div class="dropdown">
+      <button class="dropbtn"><img src="shuainain.jpg" alt="Avatar" class="avatar"></button>
+      <div class="dropdown-content">
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <!-- 顶部导航栏 -->
+
+
+  <!-- 页面内容 -->
+  <div class="row">
+    <!-- 左侧菜单 -->
+    <div class="col-md-2 sidebar">
+      <h5>Menu</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" th:href="@{/staff/leaveApplication/history}">My LeaveApplication History</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/staff/compensationLeave/history}">My Compensation Claims</a></li>
+      </ul>
+      <h5 class="mt-4">Leave Balance</h5>
+      <ul class="list-group">
+        <li class="list-group-item bg-dark">Annual Leave Balance: <span th:text="${user.getAnnual_leave_entitlement_last()}">0</span> days</li>
+        <li class="list-group-item bg-dark">Medical Leave Balance: <span th:text="${user.getMedical_leave_entitlement_last()}">0</span> days</li>
+        <li class="list-group-item bg-dark">Compensation Leave Balance: <span th:text="${user.getCompensation_leave_balance_last()}">0</span> days</li>
+      </ul>
+    </div>
+    <!-- 右侧内容 -->
+    <div class="col-md-10">
+      <div class="container">
+        <!--  <nav class="sidebar">-->
+        <!--    <h2>Menu</h2>-->
+        <!--    <ul>-->
+        <!--      <li><a th:href="@{/staff/leaveApplication/history}">Manage LeaveApplication</a></li>-->
+        <!--      <li><a th:href="@{/staff/compensationLeave/history}">Manage claimCompensation</a></li>-->
+        <!--    </ul>-->
+        <!--  </nav>-->
+        <h1 class="mt-5">Your CompensationLeave Applications</h1>
+
+        <a href="/staff/apply-comLeave" class="btn btn-primary">Create CompensationLeave Application</a>
+        <div th:if="${compensationLeaves.isEmpty()}">
+          <h3>You have not submitted any compensationLeave applications yet.</h3>
+        </div>
+
+        <div th:if="${!compensationLeaves.isEmpty()}">
+          <table class="table mt-3">
+            <thead>
+            <tr>
+              <th>Hours Time</th>
+              <th>Start Date</th>
+              <th>Start Period</th>
+              <th>End Date</th>
+              <th>End Period</th>
+              <th>Reason</th>
+              <th>Work Dissemination</th>
+              <th>Contact Details</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="compensationLeave : ${compensationLeaves}">
+              <td th:text="${compensationLeave.hours_worked}"></td>
+              <td th:text="${compensationLeave.startDate}"></td>
+              <td th:text="${compensationLeave.startPeriod}"></td>
+              <td th:text="${compensationLeave.endDate}"></td>
+              <td th:text="${compensationLeave.endPeriod}"></td>
+              <td th:text="${compensationLeave.reason}"></td>
+              <td th:text="${compensationLeave.work_dissemination}"></td>
+              <td th:text="${compensationLeave.contact_details}"></td>
+              <td th:text="${compensationLeave.status}"></td>
+              <td>
+                <div th:if="${#strings.equals(compensationLeave.status.name(), 'APPLIED')  or #strings.equals(compensationLeave.status.name(),'UPDATED')}">
+                  <a th:href="@{'/staff/compensationLeave/edit/' + ${compensationLeave.id}}">Update</a> |
+                  <a th:href="@{'/staff/compensationLeave/delete/' + ${compensationLeave.id}}">Delete</a>
+                </div>
+                <div th:if="${#strings.equals(compensationLeave.status.name(), 'APPROVED')}">
+                  <a th:href="@{'/staff/compensationLeave/cancel/' + ${compensationLeave.id}}">Cancel</a>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+</body>
+</html>

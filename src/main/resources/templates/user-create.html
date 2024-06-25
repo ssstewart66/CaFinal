@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+    <link rel="stylesheet" href="/css/user-create.css">
+</head>
+<body>
+<h2>Create User Form</h2>
+<form th:action="@{/Admin/users/save}" th:object="${user}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <fieldset>
+        <label for="name">Account:</label>
+        <input type="text" id="name" th:field="*{account}">
+        <p th:if="${#fields.hasErrors('account')}" th:errors="*{account}">Account Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="password">Password:</label>
+        <input type="password" id="password" th:field="*{password}">
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="username">Username:</label>
+        <input type="text" id="username" th:field="*{username}">
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="role">Role:</label>
+        <select id="role" th:field="*{role}">
+            <option value="" disabled selected>Select Role</option>
+            <option value="0">Admin</option>
+            <option value="1">Staff</option>
+            <option value="2">Manager</option>
+        </select>
+        <p th:if="${#fields.hasErrors('role')}" th:errors="*{role}">Role Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="department">Department:</label>
+        <select id="department" th:field="*{department}">
+            <option value="" disabled selected>Select Department</option>
+            <option value= 0>Administrative</option>
+            <option value= 1>Professional</option>
+        </select>
+        <p th:if="${#fields.hasErrors('department')}" th:errors="*{department}">Department Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="leaveApproverid">Leave Approver:</label>
+        <input type="number" id="leaveApproverid" th:field="*{leaveApproverid}">
+        <p th:if="${#fields.hasErrors('leaveApproverid')}" th:errors="*{leaveApproverid}">Leave Approver Error</p>
+    </fieldset>
+    <fieldset>
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}">
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>
+    </fieldset>
+    <fieldset>
+        <input type="submit" value="Save" class="btn btn-primary"/>
+        &nbsp; &nbsp;
+        <input type="reset" value="Reset" class="btn btn-secondary"/>
+    </fieldset>
+</form>
+</body>
+</html>
