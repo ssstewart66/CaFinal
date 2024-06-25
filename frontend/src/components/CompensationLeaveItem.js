@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CompensationItem = ({ application, onUpdateStatus }) => {
+const CompensationLeaveItem = ({ application, onUpdateStatus }) => {
     const handleStatusChange = (newStatus) => {
         onUpdateStatus(application.id, newStatus);
     };
@@ -22,4 +22,4 @@ const CompensationItem = ({ application, onUpdateStatus }) => {
     );
 };
 
-export default CompensationItem;
+export default CompensationLeaveItem;

@@ -1,7 +1,9 @@
 import React from 'react';
-import CompensationItem from './CompensationLeaveItem';
+import CompensationLeaveItem from "./CompensationLeaveItem";
 
 const CompensationLeaveList = ({ leaves, onUpdateStatus }) => {
+    console.log('CompensationLeaveList received leaves:', leaves);
+
     if (!leaves || leaves.length === 0) {
         return <p>No compensation leaves found.</p>;
     }
@@ -21,7 +23,7 @@ const CompensationLeaveList = ({ leaves, onUpdateStatus }) => {
             </thead>
             <tbody>
             {leaves.map(application => (
-                <CompensationItem
+                <CompensationLeaveItem
                     key={application.id}
                     application={application}
                     onUpdateStatus={onUpdateStatus}

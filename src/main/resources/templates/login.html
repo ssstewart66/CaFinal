@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('/images/nus.jpg') no-repeat center center fixed;
+            background: url('/static/images/nus.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #333;
             padding: 20px;
@@ -84,7 +84,7 @@
 <body>
 <div class="form-container">
     <h3>Leave Application Processing System - Login</h3>
-    <form th:action="@{/home/authenticate}" th:object="${user}" method="post">
+    <form th:action="@{/login}" th:object="${user}" method="post">
         <table class="framed">
             <tr>
                 <td>Account:</td>

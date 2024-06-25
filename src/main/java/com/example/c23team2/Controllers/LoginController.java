@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 public class LoginController {
     @Autowired
-    private LoginService userInterface;
+    private UserService userInterface;
 
     @GetMapping(value = {"/", "/login", "/home"})
     public String login(Model model) {
@@ -29,7 +29,7 @@ public class LoginController {
         return "login";
     }
 
-    @RequestMapping(value = "/home/authenticate")
+    @RequestMapping(value = "/login")
     public String authenticate(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model,
                                HttpSession session, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {

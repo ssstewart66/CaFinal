@@ -32,6 +32,8 @@ const LeaveApplicationItem = ({ application, onUpdateStatus }) => {
             <td>{application.start_date}</td>
             <td>{application.end_date}</td>
             <td>{application.reason}</td>
+            <td>{application.work_dissemination}</td>
+            <td>{application.contact_details}</td>
             <td>{application.status}</td>
             <td>{new Date(application.created_at).toLocaleString()}</td>
             <td>{new Date(application.updated_at).toLocaleString()}</td>

@@ -96,16 +96,14 @@ public class LeaveApplicationValidator implements Validator {
             int requestedDays = leaveApplicationService.calculateTotalDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date());
             int realdays;
             if (requestedDays <= 14) {
-                realdays = requestedDays;
-            } else {
                 realdays = leaveApplicationService.calculateWorkingDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date(), publicHolidayService.getPublicHolidays());
+            } else {
+                realdays = requestedDays;
+
             }
 
             if (leaveApplication.getLeaveType().getId() == 1 || leaveApplication.getLeaveType().getId() == 2) {
-                boolean isEligible = leaveApplicationService.isAnnualLeaveEligible(leaveApplication, publicHolidayService.getPublicHolidays());
-                if (!isEligible) {
-                    errors.rejectValue("leaveType", "leaveType.invalid", "Annual leave calculation is incorrect.");
-                } else if (realdays > user.getAnnual_leave_entitlement_last()) {
+                if (realdays > user.getAnnual_leave_entitlement_last()) {
                     errors.rejectValue("leaveType", "leaveType.insufficient", "Insufficient annual leave balance.");
                 }
             }

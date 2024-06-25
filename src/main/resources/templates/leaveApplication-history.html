@@ -140,8 +140,7 @@
                             <label for="page-size-selector" class="mr-2">Results per page:</label>
                             <select id="page-size-selector" class="form-control" onchange="location = this.value;">
                                 <option value="2" th:selected="${leaveApplications.size == 2}">2</option>
-                                <option value="10" th:selected="${leaveApplications.size == 5}">5</option>
-                                <option value="20" th:selected="${leaveApplications.size == 10}">10</option>
+                                <option value="10" th:selected="${leaveApplications.size == 10}">10</option>
                                 <option value="25" th:selected="${leaveApplications.size == 25}">25</option>
                             </select>
                         </div>

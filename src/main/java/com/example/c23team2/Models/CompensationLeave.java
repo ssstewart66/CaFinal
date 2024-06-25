@@ -25,7 +25,6 @@ public class CompensationLeave {
     private String startPeriod;  // "MORNING", "AFTERNOON", "FULL_DAY"
     //@NotNull(message = "End period is required")
     private String endPeriod;// "MORNING", "AFTERNOON", "FULL_DAY"
-    @Min(value = 0, message = "Hours worked must be greater than or equal to 0")
     private double hours_worked;
     private double Leave_days;
 

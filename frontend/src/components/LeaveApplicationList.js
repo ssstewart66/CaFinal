@@ -23,6 +23,8 @@ const LeaveApplicationList = ({ applications, onUpdateStatus }) => {
             <table>
                 <thead>
                 <tr>
+                    <th>Leave Id</th>
+                    <th>UserName</th>
                     <th>Leave Type</th>
                     <th>Start Date</th>
                     <th>End Date</th>
