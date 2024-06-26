@@ -12,7 +12,7 @@ const LeaveApplicationList = ({ applications, onUpdateStatus }) => {
 
     const handleItemsPerPageChange = (e) => {
         setItemsPerPage(parseInt(e.target.value));
-        setCurrentPage(1); // Reset to first page when items per page changes
+        setCurrentPage(1);
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;

@@ -30,16 +30,6 @@ public class   AdminController {
         return "/user-list";
     }
 
-    @GetMapping("/users/{id}")
-    public String getUser(@PathVariable int id, Model model) {
-        Optional<User> user = adminService.findUserById(id);
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-            return "user-details";
-        }else{
-            return "redirect:/";
-        }
-    }
 
     @RequestMapping("/users/create")
     public String createUser(Model model) {
@@ -106,16 +96,6 @@ public class   AdminController {
         return "leaveTypes-manage";
     }
 
-    @GetMapping("/leavetypes/{id}")
-    public String getLeaveType(@PathVariable int id, Model model) {
-        Optional<LeaveType> leaveType = leaveTypeService.findLeaveTypeById(id);
-        if (leaveType.isPresent()) {
-            model.addAttribute("leavetype", leaveType.get());
-            return "leaveTypes-create";
-        } else {
-            return "redirect:/Admin/leavetypes";
-        }
-    }
 
     @RequestMapping("/leavetypes/create")
     public String createLeaveType(Model model) {

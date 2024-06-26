@@ -16,7 +16,7 @@ function useQuery() {
 function App() {
   const [leaveApplications, setLeaveApplications] = useState([]);
   const [compensationLeaves, setCompensationLeaves] = useState([]);
-  const [status, setStatus] = useState('APPLIED'); // 默认显示待处理的申请
+  const [status, setStatus] = useState('APPLIED');
   const [error, setError] = useState(null);
   const query = useQuery();
   const username = query.get("username");
@@ -30,7 +30,7 @@ function App() {
        if (Array.isArray(response.data)) {
           setLeaveApplications(response.data);
         } else {
-          console.error('预期为数组，但得到:', response.data);
+          console.error('数据', response.data);
           setError('数据格式不正确');
         }
       } catch (error) {
@@ -68,9 +68,8 @@ function App() {
 
   const updateCompensationLeaveStatus = async (id, newStatus) => {
     try {
-      const updatedApplication = { status: newStatus }; // 创建一个包含新状态的对象
+      const updatedApplication = { status: newStatus };
       await axios.put(`http://localhost:8080/manager/compensation/${id}/status`, updatedApplication);
-      // 更新后重新获取数据
       const response = await axios.get(`http://localhost:8080/manager/compensation/status/${status}`);
       setCompensationLeaves(response.data);
     } catch (error) {

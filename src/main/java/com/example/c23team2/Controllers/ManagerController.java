@@ -3,10 +3,7 @@ package com.example.c23team2.Controllers;
 import com.example.c23team2.Interfacemethods.AdminService;
 import com.example.c23team2.Interfacemethods.LeaveApplicationService;
 import com.example.c23team2.Interfacemethods.ManagerService;
-import com.example.c23team2.Models.CompensationLeave;
-import com.example.c23team2.Models.LeaveApplication;
-import com.example.c23team2.Models.LeaveApplicationStatusEnum;
-import com.example.c23team2.Models.User;
+import com.example.c23team2.Models.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +11,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,6 +58,10 @@ public class ManagerController {
         return res;
     }
 
+    private int calculateLeaveDays(LocalDate startDate, LocalDate endDate) {
+        return Period.between(startDate, endDate).getDays()+1;
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<Void> updateLeaveApplicationStatus(@PathVariable int id, @RequestBody LeaveApplication updatedApplication){
         Optional<LeaveApplication> leaveApplicationOpt = managerService.getLeaveApplicationById(id);
@@ -72,6 +75,22 @@ public class ManagerController {
 
             if (oldStatus != updatedApplication.getStatus()) {
                 sendStatusChangeEmail(leaveApplication);
+            }
+
+            if(updatedApplication.getStatus().equals(LeaveApplicationStatusEnum.REJECTED)){
+                int leavedays = calculateLeaveDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date());
+                User u = leaveApplication.getUser();
+                LeaveType leaveType = leaveApplication.getLeaveType();
+
+                if(leaveType.getId()==1||leaveType.getId()==2){
+                    u.setAnnual_leave_entitlement_last(u.getAnnual_leave_entitlement_last()+leavedays);
+                }
+                else if(leaveType.getId()==3){
+                    u.setMedical_leave_entitlement_last(u.getMedical_leave_entitlement_last()+leavedays);
+                }
+                else {
+                    u.setCompensation_leave_balance_last(u.getCompensation_leave_balance_last()+leavedays);
+                }
             }
 
             return ResponseEntity.ok().build();

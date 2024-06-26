@@ -111,6 +111,9 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     }
 
     public int calculateTotalDays(LocalDate start, LocalDate end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException(start + " < " + end);
+        }
         // Use Math.toIntExact to safely convert long to int
         return Math.toIntExact(start.datesUntil(end.plusDays(1)).count());
     }
@@ -129,6 +132,9 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     }
 
     public boolean datesOverlap(LeaveApplication newLeave, LeaveApplication existingLeave) {
+        if (existingLeave.getStatus() == LeaveApplicationStatusEnum.CANCEL || existingLeave.getStatus() == LeaveApplicationStatusEnum.REJECTED) {
+            return false;
+        }
         return !newLeave.getEnd_date().isBefore(existingLeave.getStart_date()) && !newLeave.getStart_date().isAfter(existingLeave.getEnd_date());
     }
 

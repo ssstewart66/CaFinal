@@ -152,28 +152,10 @@ public class StaffController {
         model.addAttribute("leaveTypes", leaveTypes);
         model.addAttribute("leaveApplication", leaveApplication);
 
-        User user = (User) session.getAttribute("user");
-        Integer intdays = leaveApplicationService.calculateTotalDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date());
-
-        List<PublicHoliday> publicHolidays = publicHolidayService.getPublicHolidays();
-
-        if (leaveApplication.getLeaveType().getId() == 1 || leaveApplication.getLeaveType().getId() == 2) {
-            if (intdays <= 14) {
-                Integer realintdays = leaveApplicationService.calculateWorkingDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date(), publicHolidays);
-                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() + realintdays);
-            } else {
-                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() + intdays);
-            }
-
-        }
-        if (leaveApplication.getLeaveType().getId() == 3) { // Medical leave type ID
-
-            user.setMedical_leave_entitlement_last(user.getMedical_leave_entitlement_last() + intdays);
-
-        }
-        userService.updateUser(user);
+        // 仅加载数据，不进行余额调整
         return "/leaveApplication-edit";
     }
+
 
     @PostMapping("/leaveApplication/edit/{id}")
     public String editLeave(@ModelAttribute @Valid LeaveApplication leaveApplication, BindingResult result, @PathVariable Integer id, Model model, HttpSession session) {
@@ -182,6 +164,7 @@ public class StaffController {
             model.addAttribute("leaveTypes", leaveTypes);
             return "/leaveApplication-edit"; // Return to form if there are errors
         }
+
         LeaveApplication originalLeaveApplication = leaveApplicationService.findLeaveApplicationById(id);
         leaveApplication.setCreated_at(originalLeaveApplication.getCreated_at());
 
@@ -190,33 +173,33 @@ public class StaffController {
         Optional<LeaveType> leaveTypeOptional = leaveTypeService.findLeaveTypeById(leaveApplication.getLeaveType().getId());
 
         leaveApplication.setLeaveType(leaveTypeOptional.get());
-
         leaveApplication.setStatus(LeaveApplicationStatusEnum.UPDATED);
         leaveApplication.setUpdated_at(LocalDateTime.now());
 
-
-        Integer intdays = leaveApplicationService.calculateTotalDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date());
+        // 调整假期余额
+        int originalDays = leaveApplicationService.calculateTotalDays(originalLeaveApplication.getStart_date(), originalLeaveApplication.getEnd_date());
+        int newDays = leaveApplicationService.calculateTotalDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date());
 
         List<PublicHoliday> publicHolidays = publicHolidayService.getPublicHolidays();
+        int originalWorkingDays = leaveApplicationService.calculateWorkingDays(originalLeaveApplication.getStart_date(), originalLeaveApplication.getEnd_date(), publicHolidays);
+        int newWorkingDays = leaveApplicationService.calculateWorkingDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date(), publicHolidays);
 
         if (leaveApplication.getLeaveType().getId() == 1 || leaveApplication.getLeaveType().getId() == 2) {
-            if (intdays <= 14) {
-                Integer realintdays = leaveApplicationService.calculateWorkingDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date(), publicHolidays);
-                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() - realintdays);
+            if (newDays <= 14) {
+                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() + originalWorkingDays - newWorkingDays);
             } else {
-                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() - intdays);
+                user.setAnnual_leave_entitlement_last(user.getAnnual_leave_entitlement_last() + originalDays - newDays);
             }
-
         }
         if (leaveApplication.getLeaveType().getId() == 3) { // Medical leave type ID
-
-            user.setMedical_leave_entitlement_last(user.getMedical_leave_entitlement_last() - leaveApplicationService.calculateTotalDays(leaveApplication.getStart_date(), leaveApplication.getEnd_date()));
-
+            user.setMedical_leave_entitlement_last(user.getMedical_leave_entitlement_last() + originalDays - newDays);
         }
+
         leaveApplicationService.updateLeaveApplication(leaveApplication);
         userService.updateUser(user);
         return "redirect:/staff/leaveApplication/history";
     }
+
 
     @RequestMapping(value = "/leaveApplication/delete/{id}")
     public String deleteLeaveApplication(@PathVariable Integer id, HttpSession session) {

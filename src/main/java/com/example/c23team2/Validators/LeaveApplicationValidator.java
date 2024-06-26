@@ -55,6 +55,14 @@ public class LeaveApplicationValidator implements Validator {
             errors.rejectValue("end_date", "end_date.empty", "End date is required.");
         }
 
+        // 验证 start_date 是否在 end_date 之后
+        if (leaveApplication.getStart_date() != null && leaveApplication.getEnd_date() != null) {
+            if (leaveApplication.getStart_date().isAfter(leaveApplication.getEnd_date())) {
+                errors.rejectValue("start_date", "start_date.invalid", "Start date must be before end date.");
+                return; // 一旦发现错误，直接返回，避免调用服务层方法
+            }
+        }
+
         // 检查开始日期和结束日期是否为工作日
         if (leaveApplication.getStart_date() != null) {
             if (leaveApplicationService.isNonWorkingDay(leaveApplication.getStart_date())) {
