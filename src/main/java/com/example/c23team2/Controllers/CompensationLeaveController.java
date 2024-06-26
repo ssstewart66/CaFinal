@@ -3,7 +3,7 @@ package com.example.c23team2.Controllers;
 import com.example.c23team2.Models.CompensationLeave;
 import com.example.c23team2.Models.LeaveApplicationStatusEnum;
 import com.example.c23team2.Models.User;
-import com.example.c23team2.Services.CompensationLeaveImpl;
+import com.example.c23team2.Services.CompensationLeaveInterface;
 import com.example.c23team2.Services.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -22,13 +22,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/staff")
 public class CompensationLeaveController {
     @Autowired
-    private CompensationLeaveImpl compensationLeaveInterface;
+    private CompensationLeaveInterface compensationLeaveInterface;
 
     @Autowired
     private UserServiceImpl userInterface;
 
     @Autowired
-    public void setCompensationLeave(CompensationLeaveImpl compensationLeave) {
+    public void setCompensationLeave(CompensationLeaveInterface compensationLeave) {
         this.compensationLeaveInterface = compensationLeave;
     }
 
@@ -117,14 +117,19 @@ public class CompensationLeaveController {
     public String editCourse(HttpSession session,@ModelAttribute CompensationLeave compensationLeave, BindingResult bindingResult, @PathVariable Integer id){
         User user = (User) session.getAttribute("user");
 
-        CompensationLeave currentLeave = compensationLeaveInterface.findCompensationLeaveById(id);
-
-        LocalDate startDate = currentLeave.getStartDate();
-        LocalDate endDate = currentLeave.getEndDate();
+        LocalDate startDate =compensationLeave.getStartDate();
+        LocalDate endDate = compensationLeave.getEndDate();
 
         List<CompensationLeave> historyLeaves = compensationLeaveInterface.findConflictingLeaves(user.getId(),id,startDate,endDate);
         if (!historyLeaves.isEmpty()) {
             bindingResult.rejectValue("startDate", "error.compensationLeave", "There is a historical leave that conflicts with the new leave's start date.");
+        }
+
+        if (compensationLeave.getEndDate().isBefore(compensationLeave.getStartDate()) ||
+                (compensationLeave.getEndDate().isEqual(compensationLeave.getStartDate()) &&
+                        "MORNING".equals(compensationLeave.getEndPeriod()) &&
+                        "AFTERNOON".equals(compensationLeave.getStartPeriod()))) {
+            bindingResult.rejectValue("endDate", "error.compensationLeave", "End date and time cannot be earlier than start date and time.");
         }
 
         double total2 = compensationLeaveInterface.calculateCompensationLeave(user.getId());
